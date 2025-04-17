@@ -33,15 +33,13 @@ app.post('/api/user/login',async(req,res)=>{
          if(!user) throw 'User not found';
 
         // 2 - compare the password with the HASHED password on the DB, -> move forward
-
-        res.status(200).send(user)
+        user.comparePassword(req.body.password,(err, isMatch)=>{
+            if(err) throw 'Bad password';
+            res.status(200).send(isMatch);
+        })
     } catch (error) {
         res.json({message:error})
     }
-
-
-    
-    
      // 3 - send response
 })
 
