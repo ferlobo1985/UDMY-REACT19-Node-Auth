@@ -35,12 +35,19 @@ app.post('/api/user/login',async(req,res)=>{
         // 2 - compare the password with the HASHED password on the DB, -> move forward
         user.comparePassword(req.body.password,(err, isMatch)=>{
             if(err) throw 'Bad password';
-            res.status(200).send(isMatch);
+            if(!isMatch) return res.status(400).json({
+                message:'Bad password'
+            })
+
+             // 3 - send response
+            user.generateToken((err,user)=>{
+                if(err) throw err;
+                res.cookie('auth',user.token).send('ok')
+            })
         })
     } catch (error) {
         res.json({message:error})
     }
-     // 3 - send response
 })
 
 
