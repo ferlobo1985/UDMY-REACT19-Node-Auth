@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const bodyParser =  require('body-parser');
+const cookieParser = require('cookie-parser')
 const mongooose =  require('mongoose');
 
 const mongoUri = 'mongodb+srv://admin:oJmb6n30atusa7Lq@cluster0.b0reb63.mongodb.net/auth?retryWrites=true&w=majority&appName=Cluster0';
@@ -8,6 +9,7 @@ mongooose.connect(mongoUri);
 
 /// MIDDLEWARE
 app.use(bodyParser.json());
+app.use(cookieParser())
 
 /// MODELS
 const { User } = require('./models/user');
@@ -48,6 +50,18 @@ app.post('/api/user/login',async(req,res)=>{
     } catch (error) {
         res.json({message:error})
     }
+})
+
+
+app.get('/api/books',(req,res)=>{
+    let token =  req.cookies.auth;
+
+    User.findByToken(token,(err,user)=>{
+        if(err) throw err;
+        if(!user) return res.status(401).send({message:'Bad token'});
+        res.status(200).send(user)
+    })
+
 })
 
 
