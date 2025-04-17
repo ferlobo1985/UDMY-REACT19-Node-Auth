@@ -32,6 +32,8 @@ app.post('/api/user/login',async(req,res)=>{
          let user = await User.findOne({'email': req.body.email});
          if(!user) throw 'User not found';
 
+        // 2 - compare the password with the HASHED password on the DB, -> move forward
+
         res.status(200).send(user)
     } catch (error) {
         res.json({message:error})
@@ -39,7 +41,7 @@ app.post('/api/user/login',async(req,res)=>{
 
 
     
-     // 2 - compare the password with the HASHED password on the DB, -> move forward
+    
      // 3 - send response
 })
 
