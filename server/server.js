@@ -53,15 +53,30 @@ app.post('/api/user/login',async(req,res)=>{
 })
 
 
-app.get('/api/books',(req,res)=>{
+const jwt = require('jsonwebtoken');
+let authenticate = (req,res,next) => {
     let token =  req.cookies.auth;
 
-    User.findByToken(token,(err,user)=>{
-        if(err) throw err;
-        if(!user) return res.status(401).send({message:'Bad token'});
-        res.status(200).send(user)
+    // jwt.verify(token,'supersecretpassword',(err,decode)=>{
+    //     if(!decode) res.status(401).send({message:'Bad token'});
+    //     next();
+    // })
+   User.findByToken(token,(err,user)=>{
+        if(!user) res.status(401).send({message:'Bad token'});
+        req.user = user;
+        next();
     })
+}
 
+app.get('/api/books',authenticate,(req,res)=>{
+    // let token =  req.cookies.auth;
+
+    // User.findByToken(token,(err,user)=>{
+    //     if(err) throw err;
+    //     if(!user) return res.status(401).send({message:'Bad token'});
+    //     res.status(200).send(user)
+    // })
+    res.status(200).send(req.user);
 })
 
 
